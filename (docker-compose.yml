@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  arixbyte-mongodb:
+    image: mongo:7.0
+    container_name: arixbyte-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: arixbyte
+    volumes:
+      - mongo-data:/data/db
+
+  arixbyte-api:
+    build:
+      context: ./arixbyte-api
+      dockerfile: Dockerfile
+    container_name: arixbyte-api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      MONGO_URI: mongodb://arixbyte-mongodb:27017/arixbyte
+    depends_on:
+      - arixbyte-mongodb
+
+volumes:
+  mongo-data:
